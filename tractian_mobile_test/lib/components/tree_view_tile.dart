@@ -11,19 +11,18 @@ class TreeViewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.only(left: indentLevel * 20.0), // Add space for nesting
+      padding: EdgeInsets.only(left: indentLevel * 20.0),
       child: ExpansionTile(
-        leading: Image.asset('assets/location.png'), // Location icon
+        leading: Image.asset(
+          'assets/location.png',
+          width: 24,
+          height: 24,
+        ),
         title: Text(location.name),
         children: [
-          // Recursively add sublocations with increased indent
-          ...location.subLocations
-              .map((subLoc) =>
-                  TreeViewTile(location: subLoc, indentLevel: indentLevel + 1))
-              .toList(),
-          // Add assets under this location with increased indent
-          ...location.assets.map((asset) => buildAssetTile(asset)).toList(),
+          ...location.subLocations.map((subLoc) =>
+              TreeViewTile(location: subLoc, indentLevel: indentLevel + 1)),
+          ...location.assets.map((asset) => buildAssetTile(asset)),
         ],
       ),
     );
@@ -31,20 +30,30 @@ class TreeViewTile extends StatelessWidget {
 
   Widget buildAssetTile(Asset asset) {
     return Padding(
-      padding: EdgeInsets.only(
-          left: (indentLevel + 1) * 20.0), // Add space for asset nesting
+      padding: EdgeInsets.only(left: (indentLevel + 1) * 20.0),
       child: ExpansionTile(
-        leading: Image.asset(asset.sensorType != null
-            ? 'assets/component.png'
-            : 'assets/asset.png'), // Differentiate between asset and component
-        title: Text(asset.name),
+        leading: Image.asset(
+          asset.sensorType != null
+              ? 'assets/component.png'
+              : 'assets/asset.png',
+          width: 24,
+          height: 24,
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(asset.name),
+            ),
+            if (asset.status == 'operating')
+              const Icon(Icons.electric_bolt, color: Colors.green, size: 16),
+            if (asset.status == 'alert')
+              const Icon(Icons.circle, color: Colors.red, size: 16),
+          ],
+        ),
         subtitle: asset.sensorType != null
             ? Text("Component - ${asset.sensorType}")
             : null,
-        // If the asset has sub-assets, display them with more indentation
-        children: asset.subAssets
-            .map((subAsset) => buildAssetTile(subAsset))
-            .toList(),
+        children: asset.subAssets.map(buildAssetTile).toList(),
       ),
     );
   }

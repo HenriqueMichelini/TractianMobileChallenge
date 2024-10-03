@@ -15,6 +15,8 @@ class AssetsScreen extends StatefulWidget {
 
 class _AssetsScreenState extends State<AssetsScreen> {
   List<Location> locations = [];
+  bool isEnergySensorActive = false;
+  bool isCriticalActive = false;
 
   @override
   void initState() {
@@ -35,6 +37,24 @@ class _AssetsScreenState extends State<AssetsScreen> {
     } catch (e) {
       print("Error loading data: $e");
     }
+  }
+
+  void toggleEnergySensor() {
+    setState(() {
+      isEnergySensorActive = !isEnergySensorActive;
+      if (isEnergySensorActive) {
+        isCriticalActive = false;
+      }
+    });
+  }
+
+  void toggleCritical() {
+    setState(() {
+      isCriticalActive = !isCriticalActive;
+      if (isCriticalActive) {
+        isEnergySensorActive = false;
+      }
+    });
   }
 
   @override
@@ -73,7 +93,8 @@ class _AssetsScreenState extends State<AssetsScreen> {
                   child: AssetsButtonFilter(
                     text: 'Sensor de energia',
                     icon: const Icon(Icons.electric_bolt),
-                    function: () {},
+                    isActive: isEnergySensorActive,
+                    onToggle: toggleEnergySensor,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -81,7 +102,8 @@ class _AssetsScreenState extends State<AssetsScreen> {
                   child: AssetsButtonFilter(
                     text: 'Crítico',
                     icon: const Icon(Icons.error_outline),
-                    function: () {},
+                    isActive: isCriticalActive,
+                    onToggle: toggleCritical,
                   ),
                 ),
               ],

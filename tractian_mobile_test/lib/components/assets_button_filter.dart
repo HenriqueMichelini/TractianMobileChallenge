@@ -1,50 +1,28 @@
 import 'package:flutter/material.dart';
 
-class AssetsButtonFilter extends StatefulWidget {
+class AssetsButtonFilter extends StatelessWidget {
   const AssetsButtonFilter({
     super.key,
     required this.text,
     required this.icon,
-    required this.function,
+    required this.isActive,
+    required this.onToggle,
   });
 
   final String text;
   final Icon icon;
-  final Function function;
-
-  @override
-  State<AssetsButtonFilter> createState() => _AssetsButtonFilterState();
-}
-
-class _AssetsButtonFilterState extends State<AssetsButtonFilter> {
-  bool isActive = false;
-
-  late Color buttonBackgroundColor;
-  late Color buttonIconColor;
-  late Color buttonTextColor;
-
-  @override
-  void initState() {
-    super.initState();
-    changeButtonColors(isActive);
-  }
-
-  void changeButtonColors(bool isActive) {
-    setState(() {
-      if (isActive) {
-        buttonBackgroundColor = const Color.fromARGB(255, 33, 136, 255);
-        buttonIconColor = Colors.white;
-        buttonTextColor = Colors.white;
-      } else {
-        buttonBackgroundColor = Colors.white;
-        buttonIconColor = const Color.fromARGB(255, 33, 136, 255);
-        buttonTextColor = const Color.fromARGB(255, 33, 136, 255);
-      }
-    });
-  }
+  final bool isActive;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
+    final buttonBackgroundColor =
+        isActive ? const Color.fromARGB(255, 33, 136, 255) : Colors.white;
+    final buttonIconColor =
+        isActive ? Colors.white : const Color.fromARGB(255, 33, 136, 255);
+    final buttonTextColor =
+        isActive ? Colors.white : const Color.fromARGB(255, 33, 136, 255);
+
     return TextButton.icon(
       style: TextButton.styleFrom(
         backgroundColor: buttonBackgroundColor,
@@ -53,18 +31,14 @@ class _AssetsButtonFilterState extends State<AssetsButtonFilter> {
         ),
       ),
       icon: Icon(
-        widget.icon.icon,
+        icon.icon,
         color: buttonIconColor,
       ),
       label: Text(
-        widget.text,
+        text,
         style: TextStyle(color: buttonTextColor),
       ),
-      onPressed: () {
-        isActive = !isActive;
-        changeButtonColors(isActive);
-        widget.function();
-      },
+      onPressed: onToggle,
     );
   }
 }

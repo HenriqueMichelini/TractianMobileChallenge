@@ -4,6 +4,7 @@ class Asset {
   String? locationId;
   String? parentId;
   String? sensorType;
+  String? status;
   List<Asset> subAssets = [];
 
   Asset({
@@ -12,6 +13,7 @@ class Asset {
     this.locationId,
     this.parentId,
     this.sensorType,
+    this.status,
   });
 
   factory Asset.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class Asset {
       locationId: json['locationId'],
       parentId: json['parentId'],
       sensorType: json['sensorType'],
+      status: json['status'],
     );
   }
 }
