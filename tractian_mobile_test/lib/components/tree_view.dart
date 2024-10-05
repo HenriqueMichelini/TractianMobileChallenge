@@ -63,7 +63,7 @@ class TreeView extends StatelessWidget {
   // Função para construir o asset tile
   Widget buildAssetTile(Asset asset, List<Widget> filteredSubAssets) {
     return Padding(
-      padding: EdgeInsets.only(left: 20.0),
+      padding: const EdgeInsets.only(left: 20.0),
       child: ExpansionTile(
         leading: Image.asset(
           asset.sensorType != null
