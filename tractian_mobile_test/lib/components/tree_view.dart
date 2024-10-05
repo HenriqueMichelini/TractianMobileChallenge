@@ -96,30 +96,59 @@ class TreeView extends StatelessWidget {
   Widget buildAssetTile(Asset asset, List<Widget> filteredSubAssets) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
-      child: ExpansionTile(
-        leading: Image.asset(
-          asset.sensorType != null
-              ? 'assets/component.png'
-              : 'assets/asset.png',
-          width: 24,
-          height: 24,
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(asset.name),
+      child: filteredSubAssets.isNotEmpty // Checa se há subAssets
+          ? ExpansionTile(
+              leading: Image.asset(
+                asset.sensorType != null
+                    ? 'assets/component.png'
+                    : 'assets/asset.png',
+                width: 24,
+                height: 24,
+              ),
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Text(asset.name),
+                  ),
+                  if (asset.status == 'operating')
+                    const Icon(Icons.electric_bolt,
+                        color: Colors.green, size: 16),
+                  if (asset.status == 'alert')
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 16),
+                ],
+              ),
+              subtitle: asset.sensorType != null
+                  ? Text("Component - ${asset.sensorType}")
+                  : null,
+              children: filteredSubAssets,
+            )
+          : ListTile(
+              // Substitui por ListTile se não houver subAssets
+              leading: Image.asset(
+                asset.sensorType != null
+                    ? 'assets/component.png'
+                    : 'assets/asset.png',
+                width: 24,
+                height: 24,
+              ),
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Text(asset.name),
+                  ),
+                  if (asset.status == 'operating')
+                    const Icon(Icons.electric_bolt,
+                        color: Colors.green, size: 16),
+                  if (asset.status == 'alert')
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 16),
+                ],
+              ),
+              subtitle: asset.sensorType != null
+                  ? Text("Component - ${asset.sensorType}")
+                  : null,
             ),
-            if (asset.status == 'operating')
-              const Icon(Icons.electric_bolt, color: Colors.green, size: 16),
-            if (asset.status == 'alert')
-              const Icon(Icons.error_outline, color: Colors.red, size: 16),
-          ],
-        ),
-        subtitle: asset.sensorType != null
-            ? Text("Component - ${asset.sensorType}")
-            : null,
-        children: filteredSubAssets,
-      ),
     );
   }
 }
