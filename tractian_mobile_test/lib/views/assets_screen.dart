@@ -10,10 +10,10 @@ class AssetsScreen extends StatefulWidget {
   final String companyId;
 
   @override
-  _AssetsScreenState createState() => _AssetsScreenState();
+  AssetsScreenState createState() => AssetsScreenState();
 }
 
-class _AssetsScreenState extends State<AssetsScreen> {
+class AssetsScreenState extends State<AssetsScreen> {
   List<Location> locations = [];
   bool isEnergySensorActive = false;
   bool isCriticalActive = false;
