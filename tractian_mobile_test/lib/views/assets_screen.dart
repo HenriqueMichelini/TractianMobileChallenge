@@ -112,7 +112,11 @@ class AssetsScreenState extends State<AssetsScreen> {
             Expanded(
               child: locations.isEmpty
                   ? const Center(child: CircularProgressIndicator())
-                  : TreeView(locations: locations),
+                  : TreeView(
+                      locations: locations,
+                      isEnergySensorActive: isEnergySensorActive,
+                      isCriticalActive: isCriticalActive,
+                    ), // Passando o estado do filtro
             ),
           ],
         ),

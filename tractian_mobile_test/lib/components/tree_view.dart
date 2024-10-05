@@ -5,31 +5,45 @@ import '../components/tree_view_tile.dart';
 
 class TreeView extends StatelessWidget {
   final List<Location> locations;
+  final bool isEnergySensorActive; // Novo parâmetro para filtro de energia
+  final bool isCriticalActive; // Novo parâmetro para filtro crítico
 
-  const TreeView({super.key, required this.locations});
+  const TreeView({
+    super.key,
+    required this.locations,
+    required this.isEnergySensorActive,
+    required this.isCriticalActive,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: locations
           .map((loc) => buildLocationTile(loc))
-          .whereType<Widget>() // Filtra diretamente os valores nulos
+          .whereType<Widget>()
           .toList(),
     );
   }
 
   Widget? buildLocationTile(Location location) {
-    // Filtrar assets que contenham componentes 'operating'
-    final filteredAssets = location.assets
-        .map((asset) => filterAssetByStatus(asset))
-        .whereType<Widget>() // Filtra diretamente os valores nulos
-        .toList();
+    // Filtrar assets que contenham componentes 'operating' ou 'alert'
+    List<Widget> filteredAssets = []; // Lista mutável para ativos filtrados
+    for (var asset in location.assets) {
+      final assetTile = filterAssetByStatus(asset);
+      if (assetTile != null) {
+        filteredAssets.add(assetTile);
+      }
+    }
 
     // Filtrar subLocations
-    final filteredSubLocations = location.subLocations
-        .map((subLoc) => buildLocationTile(subLoc))
-        .whereType<Widget>() // Filtra diretamente os valores nulos
-        .toList();
+    List<Widget> filteredSubLocations =
+        []; // Lista mutável para sublocações filtradas
+    for (var subLoc in location.subLocations) {
+      final subLocationTile = buildLocationTile(subLoc);
+      if (subLocationTile != null) {
+        filteredSubLocations.add(subLocationTile);
+      }
+    }
 
     // Se não houver subLocs ou assets válidos, retorna nulo
     if (filteredSubLocations.isEmpty && filteredAssets.isEmpty) {
@@ -39,25 +53,41 @@ class TreeView extends StatelessWidget {
     // Construir o Tile da localização se houver algo para exibir
     return TreeViewTile(
       location: location,
-      filteredAssets: filteredAssets, // Lista agora é garantidamente não nula
-      filteredSubLocations:
-          filteredSubLocations, // Lista agora é garantidamente não nula
+      filteredAssets: filteredAssets,
+      filteredSubLocations: filteredSubLocations,
     );
   }
 
-  // Função para filtrar assets e subAssets
   Widget? filterAssetByStatus(Asset asset) {
     // Filtrar os subAssets recursivamente
-    final filteredSubAssets = asset.subAssets
-        .map((subAsset) => filterAssetByStatus(subAsset))
-        .whereType<Widget>() // Filtra diretamente os valores nulos
-        .toList();
+    final filteredSubAssets = <Widget>[];
 
-    // Verifica se o asset atual ou seus subAssets têm status 'operating'
-    if (asset.status == 'operating' || filteredSubAssets.isNotEmpty) {
+    for (final subAsset in asset.subAssets) {
+      final subAssetTile = filterAssetByStatus(subAsset);
+      if (subAssetTile != null) {
+        filteredSubAssets.add(subAssetTile);
+      }
+    }
+
+    // Verifica se o asset atual ou seus subAssets têm status 'operating' se o filtro de energia estiver ativo
+    if (isEnergySensorActive &&
+        (asset.status == 'operating' || filteredSubAssets.isNotEmpty)) {
       return buildAssetTile(asset, filteredSubAssets);
     }
-    return null;
+
+    // Verifica se o asset atual ou seus subAssets têm status 'alert' se o filtro crítico estiver ativo
+    if (isCriticalActive &&
+        (asset.status == 'alert' || filteredSubAssets.isNotEmpty)) {
+      return buildAssetTile(asset, filteredSubAssets);
+    }
+
+    // Se nenhum filtro estiver ativo, retornar todos os assets
+    if (!isEnergySensorActive && !isCriticalActive) {
+      return buildAssetTile(
+          asset, filteredSubAssets); // Retorna todos os ativos
+    }
+
+    return null; // Retorna nulo se não houver critérios atendidos
   }
 
   // Função para construir o asset tile
@@ -79,6 +109,8 @@ class TreeView extends StatelessWidget {
             ),
             if (asset.status == 'operating')
               const Icon(Icons.electric_bolt, color: Colors.green, size: 16),
+            if (asset.status == 'alert')
+              const Icon(Icons.error_outline, color: Colors.red, size: 16),
           ],
         ),
         subtitle: asset.sensorType != null
