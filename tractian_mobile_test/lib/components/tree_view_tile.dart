@@ -6,6 +6,7 @@ class TreeViewTile extends StatelessWidget {
   final List<Widget> filteredAssets; // Lista de ativos filtrados
   final List<Widget> filteredSubLocations; // Lista de sublocações filtradas
   final double indentLevel;
+  final bool isExpanded; // Nova propriedade para controlar a expansão
 
   const TreeViewTile({
     super.key,
@@ -13,6 +14,7 @@ class TreeViewTile extends StatelessWidget {
     required this.filteredAssets,
     required this.filteredSubLocations,
     this.indentLevel = 0,
+    required this.isExpanded, // Inicializa a nova propriedade
   });
 
   @override
@@ -29,7 +31,8 @@ class TreeViewTile extends StatelessWidget {
                 height: 24,
               ),
               title: Text(location.name),
-              initiallyExpanded: true, // Sempre aberto
+              initiallyExpanded:
+                  isExpanded, // Usar a nova propriedade para controlar a expansão
               children: [
                 ...filteredSubLocations,
                 ...filteredAssets,

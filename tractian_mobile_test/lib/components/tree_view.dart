@@ -55,6 +55,8 @@ class TreeView extends StatelessWidget {
       location: location,
       filteredAssets: filteredAssets,
       filteredSubLocations: filteredSubLocations,
+      isExpanded: isEnergySensorActive ||
+          isCriticalActive, // Expande apenas se algum filtro estiver ativo
     );
   }
 
